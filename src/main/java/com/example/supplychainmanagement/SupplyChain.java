@@ -3,7 +3,6 @@ package com.example.supplychainmanagement;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -15,13 +14,20 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class HelloApplication extends Application {
+public class SupplyChain extends Application {
+
+    public static final int width=700,height=600,headerBar=50;
+
+    Pane bodyPane=new Pane();
+    LogIn logIn=new LogIn();
+
+    ProductDetails productDetails=new ProductDetails();
     private Pane createContent(){
         Pane root=new Pane();
         root.setPrefSize(width,height+headerBar);
 
         bodyPane.setMinSize(width,height);
-        bodyPane.getChildren().addAll(loginPage());
+        bodyPane.getChildren().addAll(productDetails.getAllProduct () );
         bodyPane.setTranslateY(headerBar);
         root.getChildren().addAll(headerBar(),bodyPane);
 
@@ -40,7 +46,13 @@ public class HelloApplication extends Application {
             public void handle(ActionEvent actionEvent) {
                 String email=emailTextField.getText();
                 String password=passwordTextField.getText();
-                massagelabel.setText(email+" && " +password);
+               // massagelabel.setText(email+" && " +password);
+                if(logIn.customerLogin(email,password)){
+                    massagelabel.setText("Log In successfull");
+                }
+                else {
+                    massagelabel.setText("Log In failed");
+                }
             }
         });
         GridPane gridPane= new GridPane();
@@ -61,13 +73,21 @@ public class HelloApplication extends Application {
         return gridPane;
     };
 
-    public static final int width=700,height=600,headerBar=50;
 
-    Pane bodyPane=new Pane();
     private GridPane headerBar(){
         TextField searchText= new TextField();
         Button searchButton= new Button("Search");
 
+        searchButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                String productName=searchText.getText();
+                ;
+                //clear body and put this in the body
+                bodyPane.getChildren().clear();
+                bodyPane.getChildren().add(productDetails.getByProductName(productName));
+            }
+        });
         GridPane gridPane=new GridPane();
 
         gridPane.setMinSize(bodyPane.getMinWidth(),headerBar-10);
